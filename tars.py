@@ -1,48 +1,68 @@
 import streamlit as st
 from groq import Groq
-import base64
 
-# Sayfa Ayarları
-st.set_page_config(page_title="TARS AI", page_icon="🤖")
-st.title("🤖 TARS İşletim Sistemi")
+# 1. WEB SİTESİ AYARLARI
+st.set_page_config(page_title="TARS - Yapay Zeka Sistemi", page_icon="🤖", layout="wide")
 
-# API Anahtarı (Burayı kendi anahtarınla doldur)
+# CSS İLE TASARIMI GÜZELLEŞTİRELİM (Siyah Tema ve Fütüristik Fontlar)
+st.markdown("""
+    <style>
+    .main {
+        background-color: #0e1117;
+        color: #ffffff;
+    }
+    .stTextInput > div > div > input {
+        background-color: #262730;
+        color: white;
+        border: 1px solid #4a4a4a;
+    }
+    .stButton>button {
+        background-color: #ffffff;
+        color: black;
+        border-radius: 5px;
+    }
+    h1 {
+        font-family: 'Courier New', Courier, monospace;
+        letter-spacing: 5px;
+        text-align: center;
+    }
+    </style>
+    """, unsafe_allow_stdio=True)
+
+# 2. BAĞLANTI AYARLARI
 client = Groq(api_key="SENIN_GROQ_API_ANAHTARIN")
 
-# TARS'ın Yeni Kişiliği
-system_prompt = {
-    "role": "system", 
-    "content": "Senin adın TARS. Yıldızlararası filmindeki TARS'ın zekasına ve ismine sahipsin ama bir film karakteri gibi davranmıyorsun. Profesyonel, mantıklı ve çok zeki bir asistansın. Esprilerin dozunda ve zekice. Sesin filmdeki gibi robotik ve karakteristik."
-}
-
-# Sohbet Geçmişi
+# 3. TARS KİŞİLİĞİ
 if "messages" not in st.session_state:
-    st.session_state.messages = [system_prompt]
+    st.session_state.messages = [
+        {"role": "system", "content": "Senin adın TARS. Yıldızlararası filmindeki robotun zekasına sahip profesyonel bir web asistanısın. Kısa, öz ve zekice cevaplar verirsin."}
+    ]
 
-# --- SES FONKSİYONU ---
-def speak(text):
-    # Bu aşamada Google'ın ses altyapısını kullanıp üzerine robotik efekt ekleyeceğiz
-    # Şimdilik tarayıcının ses motorunu kullanarak TARS sesini simüle ediyoruz
-    js_code = f"""
-        var msg = new SpeechSynthesisUtterance('{text}');
-        var voices = window.speechSynthesis.getVoices();
-        msg.pitch = 0.5; // Sesi kalınlaştırır (TARS gibi)
-        msg.rate = 0.9;  // Biraz daha yavaş ve robotik konuşma
-        window.speechSynthesis.speak(msg);
-    """
-    st.components.v1.html(f"<script>{js_code}</script>", height=0)
+# 4. WEB SİTESİ ARAYÜZÜ (GÖRSEL KISIM)
+st.title("T A R S  -  OS V1.0")
+st.write("---")
 
-# Sohbeti Görüntüle
+# Yan Panel (Web sitesinin ayar kısmı)
+with st.sidebar:
+    st.image("https://upload.wikimedia.org/wikipedia/en/thumb/b/b1/Interstellar_TARS.jpg/220px-Interstellar_TARS.jpg", caption="TARS Model 1")
+    st.header("Sistem Durumu")
+    st.success("Çevrimiçi")
+    st.slider("Dürüstlük Parametresi", 0, 100, 90)
+    st.slider("Mizah Seviyesi", 0, 100, 75)
+    st.write("---")
+    st.info("Bu bir Web Sürümüdür. Yakında tüm tarayıcılarda!")
+
+# Sohbet Ekranı
 for message in st.session_state.messages:
     if message["role"] != "system":
         with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+            st.write(message["content"])
 
-# Mesaj Gönderme
-if prompt := st.chat_input("TARS'a emret..."):
+# Kullanıcı Mesaj Girişi
+if prompt := st.chat_input("TARS'a bir komut verin..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
-        st.markdown(prompt)
+        st.write(prompt)
 
     with st.chat_message("assistant"):
         response_placeholder = st.empty()
@@ -59,16 +79,5 @@ if prompt := st.chat_input("TARS'a emret..."):
             response_placeholder.markdown(full_response + "▌")
         
         response_placeholder.markdown(full_response)
-        
-        # CEVABI SESLİ OKU
-        speak(full_response)
     
     st.session_state.messages.append({"role": "assistant", "content": full_response})
-
-# Yan Menü
-with st.sidebar:
-    st.header("TARS Kontrol Paneli")
-    st.write("Dürüstlük Parametresi: %90")
-    st.write("Mizah Seviyesi: %75")
-    if st.button("🖼️ Görüntü Modülünü Hazırla"):
-        st.info("Görüntü oluşturma motoru (DALL-E veya benzeri) bir sonraki güncellemede bağlanacak.")
