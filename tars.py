@@ -27,7 +27,7 @@ st.markdown("""
         text-align: center;
     }
     </style>
-    """, unsafe_allow_stdio=True)
+    """, unsafe_allow_html=True)
 
 # 2. BAĞLANTI AYARLARI
 client = Groq(api_key="SENIN_GROQ_API_ANAHTARIN")
@@ -35,7 +35,7 @@ client = Groq(api_key="SENIN_GROQ_API_ANAHTARIN")
 # 3. TARS KİŞİLİĞİ
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "system", "content": "Senin adın TARS. Yıldızlararası filmindeki robotun zekasına sahip profesyonel bir web asistanısın. Kısa, öz ve zekice cevaplar verirsin."}
+        {"role": "system", "content": "Senin adın TARS. Yıldızlararası filmindeki robotun zekasına sahip profesyonel bir web asistanısın. Kısa, öz ve zekice cevaplar verirsin ama sen ordaki tars değilsin adın ordan esinlenmektedir."}
     ]
 
 # 4. WEB SİTESİ ARAYÜZÜ (GÖRSEL KISIM)
